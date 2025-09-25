@@ -13,6 +13,7 @@ library(tidyverse)
 ### Problem 1
 
 Importing and cleaning `pols_month`:
+
 - Breaking `mon` into year/month/day variables
 - Replacing month number with month name
 - Combining `prez_dem` and `prez_gop` into a single variable
@@ -44,6 +45,43 @@ pols_month <-
     names_prefix = "prez_", 
     values_to = "president_yn") %>% 
   select(-day)
+```
+
+Importing and cleaning `snp`:
+
+- Breaking `date` into year/month/day variables
+- Ensuring that `year` and `month` are the leading columns
+- Removing the `day` variable
+- Replacing month number with month name
+
+```{r message = FALSE}
+snp <-
+  read_csv("./data/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  separate_wider_delim(
+    date,
+    delim = "/",
+    names_sep = ".") %>% 
+  select(
+    year = date.3,
+    month = date.1,
+    everything()
+  ) %>% 
+  select(-date.2) %>% 
+  mutate(
+    month = case_match(month,
+      "1" ~ "January",
+      "2" ~ "February",
+      "3" ~ "March",
+      "4" ~ "April",
+      "5" ~ "May",
+      "6" ~ "June",
+      "7" ~ "July",
+      "8" ~ "August",
+      "9" ~ "September",
+      "10" ~ "October",
+      "11" ~ "November",
+      "12" ~ "December"))
 ```
 
 
