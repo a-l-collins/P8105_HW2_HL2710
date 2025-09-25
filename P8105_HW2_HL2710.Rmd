@@ -126,6 +126,16 @@ unemployment <-
 unemployment
 ```
 
+Joining datasets:
+
+1. Merge `snp` into `pols`
+1. Merge `unemployment` into the result
+
+```{r}
+pols_snp <- left_join(pols_month, snp, by = c("year", "month"))
+pols_snp_unemployment <- left_join(pols_snp, unemployment, by = c("year", "month"))
+```
+
 
 ### Problem 2
 
