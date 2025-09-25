@@ -18,6 +18,7 @@ Importing and cleaning `pols_month`:
 - Replacing month number with month name
 - Combining `prez_dem` and `prez_gop` into a single variable
 - Removing the`day` variable
+- Ensure that the `year` variable will match with the `snp` dataset
 
 ```{r message = FALSE}
 pols_month <-
@@ -44,7 +45,10 @@ pols_month <-
     names_to = "president", 
     names_prefix = "prez_", 
     values_to = "president_yn") %>% 
-  select(-day)
+  separate(year, into = c("extra", "year"), sep = 2) %>% 
+  select(-day, -extra)
+
+pols_month
 ```
 
 Importing and cleaning `snp`:
@@ -82,6 +86,44 @@ snp <-
       "10" ~ "October",
       "11" ~ "November",
       "12" ~ "December"))
+
+snp
+```
+
+Importing and cleaning `unemployment`:
+
+- Switching from "wide" to "long" format
+- Ensuring all variables have the appropriate name
+- Ensuring that all variables take the same values
+- Ensure that the `year` variable will match with the `snp` dataset
+
+```{r message = FALSE}
+unemployment <-
+  read_csv("./data/unemployment.csv") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    jan:dec,
+    names_to = "month",
+    values_to = "prcnt_unemployment"
+  ) %>% 
+  mutate(
+    month = case_match(month,
+      "jan" ~ "January",
+      "feb" ~ "February",
+      "mar" ~ "March",
+      "apr" ~ "April",
+      "may" ~ "May",
+      "jun" ~ "June",
+      "jul" ~ "July",
+      "aug" ~ "August",
+      "sep" ~ "September",
+      "oct" ~ "October",
+      "nov" ~ "November",
+      "dec" ~ "December")) %>% 
+  separate(year, into = c("extra", "year"), sep = 2) %>% 
+  select(-extra)
+
+unemployment
 ```
 
 
