@@ -132,8 +132,10 @@ Joining datasets:
 1. Merge `unemployment` into the result
 
 ```{r}
-pols_snp_unemployement <- left_join(pols_month, snp, by = c("year", "month")) %>% 
+pols_snp_unemployment <- left_join(pols_month, snp, by = c("year", "month")) %>% 
   left_join(unemployment, by = c("year", "month"))
+
+pols_snp_unemployment
 ```
 
 The `pols_month` dataset has 1644 observations and 10 variables, and it contains information 
@@ -149,5 +151,54 @@ contains the percentage of unemployment, S&P closing stock index value, and numb
 political party for each observed date.
 
 ### Problem 2
+
+Importing and cleaning `Mr. Trash Wheel`:
+
+1. Omit non-data entries
+1. Ensure variable names are reasonable
+1. Omit rows without dumpster-specific data
+1. Round the number of sports balls to the nearest integer and convert the result to an integer variable
+1. Add indicator for trash type and sort variables accordingly
+
+```{r message = FALSE}
+mr_trash <-
+  readxl::read_excel("./data/202409 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", skip = 1) %>% 
+  janitor::clean_names() %>% 
+  select(-x15, -x16) %>% 
+  drop_na(dumpster) %>% 
+  mutate(
+    sports_balls = round(sports_balls, 0),
+    sports_balls = as.integer(sports_balls),
+    trash_type = "mister"
+  ) %>% 
+  select(dumpster, trash_type, everything())
+
+mr_trash
+```
+
+Repeating the same process for `Professor Trash Wheel` and `Gwynnda Trash Wheel`:
+
+```{r}
+prof_trash <-
+  readxl::read_excel("./data/202409 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", skip = 1) %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  mutate(trash_type = "professor") %>% 
+  select(dumpster, trash_type, everything())
+
+prof_trash
+```
+
+```{r}
+gwynnda_trash <-
+  readxl::read_excel("./data/202409 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda Trash Wheel", skip = 1) %>% 
+  janitor::clean_names() %>% 
+  drop_na(dumpster) %>% 
+  mutate(trash_type = "gwynnda") %>% 
+  select(dumpster, trash_type, everything())
+
+gwynnda_trash
+```
+
 
 ### Problem 3
