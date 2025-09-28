@@ -169,7 +169,8 @@ mr_trash <-
   mutate(
     sports_balls = round(sports_balls, 0),
     sports_balls = as.integer(sports_balls),
-    trash_type = "mister"
+    trash_type = "mister",
+    year = as.numeric(year)
   ) %>% 
   select(dumpster, trash_type, everything())
 
@@ -198,6 +199,15 @@ gwynnda_trash <-
   select(dumpster, trash_type, everything())
 
 gwynnda_trash
+```
+
+Combining all three trash datasets to produce a single trash dataset:
+
+```{r}
+trash <- left_join(
+  mr_trash, prof_trash, 
+  by = c("dumpster", "date", "month", "year"), 
+  suffix = c(".mister", ".professor"))
 ```
 
 
