@@ -159,6 +159,7 @@ Importing and cleaning `Mr. Trash Wheel`:
 1. Omit rows without dumpster-specific data
 1. Round the number of sports balls to the nearest integer and convert the result to an integer variable
 1. Add indicator for trash type and sort variables accordingly
+1. Add a prefix to non-ID variables for later dataframe combining purposes
 
 ```{r message = FALSE}
 mr_trash <-
@@ -201,14 +202,32 @@ gwynnda_trash <-
 gwynnda_trash
 ```
 
-Combining all three trash datasets to produce a single trash dataset:
+Combining all three trash datasets to produce a single trash dataset using inline R:
 
 ```{r}
-trash <- left_join(
-  mr_trash, prof_trash, 
-  by = c("dumpster", "date", "month", "year"), 
-  suffix = c(".mister", ".professor"))
+trash <- bind_rows(mr_trash, prof_trash, gwynnda_trash)
+
+x <- filter(trash, 
+            trash_type == "professor")
+sum(
+  pull(x, weight_tons), 
+  na.rm = TRUE)
+
+x <- filter(trash, 
+            trash_type == "gwynnda", 
+            month == "June", 
+            year == 2022)
+sum(
+  pull(x, cigarette_butts), 
+  na.rm = TRUE)
 ```
 
+In the final`trash` dataset, there are 1033 observations of 15 variables. This data contains 
+the trash collection statistics for the Mister Trash Wheel, the Professor Trash Wheel, and the 
+Gwynnda Trash Wheel. As examples of the data included:
+
+- The total weight of trash collected by Professor Trash Wheel is 
+- The total number of cigarette butts collected by Gwynnda Trash Wheel in June of 2022 is 
 
 ### Problem 3
+
