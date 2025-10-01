@@ -296,11 +296,7 @@ zori_zip <-
 zori_zip
 ```
 
-
-[describe the resulting tidy dataset]
-- total observations
-- unique zip codes
-- unique neighborhoods
+In the `zori_zip` dataset resulting from the merge between the `zipcodes` dataset and `zori` dataset, there are 17,284 total observations of 14 variables, `r length(unique(pull(zori_zip, zip_code)))` total unique zip codes, and `r length(unique(pull(zori_zip, neighborhood)))` total unique neighborhoods.
 
 which zip codes are in zip but not zori? use "illustrative examples" to discuss why they may have been excluded
 
