@@ -163,7 +163,7 @@ Importing and cleaning `Mr. Trash Wheel`:
 
 ```{r message = FALSE}
 mr_trash <-
-  readxl::read_excel("./data/202409 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", skip = 1) %>% 
+  readxl::read_excel("./data/202509 Trash Wheel Collection Data.xlsx", sheet = "Mr. Trash Wheel", skip = 1) %>% 
   janitor::clean_names() %>% 
   select(-x15, -x16) %>% 
   drop_na(dumpster) %>% 
@@ -182,7 +182,7 @@ Repeating the same process for `Professor Trash Wheel` and `Gwynnda Trash Wheel`
 
 ```{r}
 prof_trash <-
-  readxl::read_excel("./data/202409 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", skip = 1) %>% 
+  readxl::read_excel("./data/202509 Trash Wheel Collection Data.xlsx", sheet = "Professor Trash Wheel", skip = 1) %>% 
   janitor::clean_names() %>% 
   drop_na(dumpster) %>% 
   mutate(trash_type = "professor") %>% 
@@ -193,10 +193,10 @@ prof_trash
 
 ```{r}
 gwynnda_trash <-
-  readxl::read_excel("./data/202409 Trash Wheel Collection Data.xlsx", sheet = "Gwynnda Trash Wheel", skip = 1) %>% 
+  readxl::read_excel("./data/202509 Trash Wheel Collection Data.xlsx", sheet = "Gwynns Falls Trash Wheel", skip = 1) %>% 
   janitor::clean_names() %>% 
   drop_na(dumpster) %>% 
-  mutate(trash_type = "gwynnda") %>% 
+  mutate(trash_type = "gwynns") %>% 
   select(dumpster, trash_type, everything())
 
 gwynnda_trash
@@ -206,28 +206,35 @@ Combining all three trash datasets to produce a single trash dataset using inlin
 
 ```{r}
 trash <- bind_rows(mr_trash, prof_trash, gwynnda_trash)
+```
 
+Calculations for the final statement:
+
+```{r}
 x <- filter(trash, 
-            trash_type == "professor")
-sum(
-  pull(x, weight_tons), 
+            trash_type == "professor") 
+
+weightprof <- sum(
+  pull(trash, weight_tons), 
   na.rm = TRUE)
 
 x <- filter(trash, 
-            trash_type == "gwynnda", 
+            trash_type == "gwynns", 
             month == "June", 
             year == 2022)
-sum(
+
+ciggwynns <- sum(
   pull(x, cigarette_butts), 
   na.rm = TRUE)
 ```
+
 
 In the final`trash` dataset, there are 1033 observations of 15 variables. This data contains 
 the trash collection statistics for the Mister Trash Wheel, the Professor Trash Wheel, and the 
 Gwynnda Trash Wheel. As examples of the data included:
 
-- The total weight of trash collected by Professor Trash Wheel is 
-- The total number of cigarette butts collected by Gwynnda Trash Wheel in June of 2022 is 
+- The total weight of trash collected by Professor Trash Wheel is `r weightprof` tons.
+- The total number of cigarette butts collected by Gwynnda Trash Wheel in June of 2022 is `r ciggwynns` cigarette butts.
 
 ### Problem 3
 
