@@ -304,8 +304,41 @@ zori_zip
 
 which zip codes are in zip but not zori? use "illustrative examples" to discuss why they may have been excluded
 
-Table:
-- compare jan 2021 rental prices to jan 2020
-  - make a difference variable and sort by it
-- make a table with the 10 zip codes (+ boro and neighborhood) with largest drop in price from jan 2020 to jan 2021
-- comment
+Preparing the data for a table comparing the top 10 zip codes with the largest drop in rental price between January 2020 and January 2021:
+
+1. Separate the `date` variable into `year`, `month`, and `day`
+1. Only keep those observations that are from January 2020 or 2021
+1. Convert dates from wide to long so that 2020 and 2021 have their own columns
+1. Take the difference in rental prices between 2020 and 2021
+1. Sort by the difference variable
+
+```{r}
+zori_zip_table <- zori_zip %>% 
+  separate(date, into = c("year", "month", "day"), sep = "_") %>% 
+  filter(year %in% c("2020", "2021"), month %in% "01") %>%
+  pivot_wider(
+    names_from = "year",
+    values_from = "rental_price",
+    names_prefix = "price_") %>% 
+  mutate(price_diff = price_2020 - price_2021) %>% 
+  select(zip_code, price_2020, price_2021, price_diff, county, neighborhood) %>% 
+  arrange(desc(price_diff))
+```
+
+Create the table:
+
+1. Set how `NA` values will be displayed
+1. Include only the top 10 rows
+1. Rename the column titles
+1. Ensure only 2 digits are shown for the prices
+
+```{r}
+options(knitr.kable.NA = "---")
+knitr::kable(
+  head(zori_zip_table, 10), 
+  col.names = c("Zip Code", "2020 Price", "2021 Price", "Price Difference", "County", "Neighborhood"),
+  align = "l",
+  digits = 2)
+```
+
+All zip codes with the greatest price drop between January 2020 and January 2021 are in Manhattan (New York County). All of these zip codes are also in the southern half of Manhattan, a region which typically has higher rental prices than in the rest of the city. The largest price difference, in Lower Manhattan, is $912.60/month, and the smallest price difference, in Gramercy Park and Murray Hill, is \$684.93/month.
