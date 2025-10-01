@@ -12,6 +12,8 @@ library(tidyverse)
 
 ### Problem 1
 
+#### `pols_month`
+
 Importing and cleaning `pols_month`:
 
 - Breaking `mon` into year/month/day variables
@@ -50,6 +52,8 @@ pols_month <-
 
 pols_month
 ```
+
+#### `snp`
 
 Importing and cleaning `snp`:
 
@@ -90,6 +94,8 @@ snp <-
 snp
 ```
 
+#### `unemployment`
+
 Importing and cleaning `unemployment`:
 
 - Switching from "wide" to "long" format
@@ -126,6 +132,8 @@ unemployment <-
 unemployment
 ```
 
+#### merging `pols`, `snp`, and `unemployment`
+
 Joining datasets:
 
 1. Merge `snp` into `pols`
@@ -151,6 +159,8 @@ contains the percentage of unemployment, S&P closing stock index value, and numb
 political party for each observed date.
 
 ### Problem 2
+
+#### `Mr. Trash Wheel`
 
 Importing and cleaning `Mr. Trash Wheel`:
 
@@ -178,7 +188,9 @@ mr_trash <-
 mr_trash
 ```
 
-Repeating the same process for `Professor Trash Wheel` and `Gwynnda Trash Wheel`:
+#### `Professor Trash Wheel` and `Gwynns Falls Trash Wheel`
+
+Repeating the same process for `Professor Trash Wheel` and `Gwynns Falls Trash Wheel`:
 
 ```{r}
 prof_trash <-
@@ -202,7 +214,9 @@ gwynnda_trash <-
 gwynnda_trash
 ```
 
-Combining all three trash datasets to produce a single trash dataset using inline R:
+#### Merging all three trash wheel datasets
+
+Combining all three trash wheel datasets to produce a single trash dataset using inline R:
 
 ```{r}
 trash <- bind_rows(mr_trash, prof_trash, gwynnda_trash)
@@ -238,6 +252,8 @@ Gwynnda Trash Wheel. As examples of the data included:
 
 ### Problem 3
 
+#### `Zip Codes`
+
 Importing and cleaning the `Zip Codes` dataset:
 
 1. Importing and cleaning
@@ -253,6 +269,8 @@ zipcodes <-
 
 zipcodes
 ```
+
+#### `zori`
 
 Importing and cleaning the `zori` dataset:
 
@@ -280,6 +298,7 @@ zori_neat <-
 zori_neat
 ```
 
+#### Merging `zipcodes` and `zori`
 
 Merging and organizing the two datasets:
 
@@ -298,7 +317,27 @@ zori_zip
 
 In the `zori_zip` dataset resulting from the merge between the `zipcodes` dataset and `zori` dataset, there are 17,284 total observations of 14 variables, `r length(unique(pull(zori_zip, zip_code)))` total unique zip codes, and `r length(unique(pull(zori_zip, neighborhood)))` total unique neighborhoods.
 
-which zip codes are in zip but not zori? use "illustrative examples" to discuss why they may have been excluded
+#### Excluded Zip Codes
+
+Determining which zip codes are included in the `zipcodes` dataset, but not in the `zori` dataset:
+
+```{r}
+zori_zip_anti <-
+  anti_join(
+    zipcodes,
+    zori_neat,
+    by = c("zip_code", "county")
+  )
+
+zori_zip_anti
+```
+
+The zip codes which are in the `zipcodes` dataset, but not in the `zori` dataset, are not included for a variety of reasons:
+
+1. Some zip codes are not included because they are non-residential zip codes. For example, the 10464 zip code in the Bronx is the zip code for Pelham Bay Park, which would not have any residential buildings listed on Zillow, as it is a park.
+1. Some zip codes are not included because they are not fully within New York City. For example, the 10704 zip code is listed as being within Bronx County, but corresponds to a neighborhood in Yonkers and not in New York City. 
+
+#### Rental Price Differences between 2020 and 2021
 
 Preparing the data for a table comparing the top 10 zip codes with the largest drop in rental price between January 2020 and January 2021:
 
